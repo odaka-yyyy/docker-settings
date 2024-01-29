@@ -1,0 +1,35 @@
+services:
+
+  wordpress:
+    # https://hub.docker.com/_/wordpress
+    container_name: xxx_wordpress
+    image: wordpress:latest
+    restart: on-failure:3
+    ports:
+      - '8080:80'
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: odaka
+      WORDPRESS_DB_PASSWORD: odaka
+      WORDPRESS_DB_NAME: odaka
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_SITEURL', 'http://' . $$_SERVER['HTTP_HOST'] );
+        define( 'WP_HOME', 'http://' . $$_SERVER['HTTP_HOST'] );
+    volumes:
+      - ./wordpress:/var/www/html
+
+  db:
+    # https://hub.docker.com/_/mysql
+    container_name: xxx_db
+    image: mysql:latest
+    restart: on-failure:3
+    environment:
+      MYSQL_DATABASE: odaka
+      MYSQL_USER: odaka
+      MYSQL_PASSWORD: odaka
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./data:/docker-entrypoint-initdb.d
